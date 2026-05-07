@@ -5,17 +5,26 @@ import { AuditInput } from '@/lib/types';
 import { PRICING_DATA } from '@/lib/pricing';
 
 export default function AuditForm({ onSubmit }: { onSubmit: (data: AuditInput) => void }) {
-  const [formData, setFormData] = useState<AuditInput>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('auditFormData');
-      return saved ? JSON.parse(saved) : getDefaultForm();
-    }
-    return getDefaultForm();
-  });
+  const [formData, setFormData] = useState<AuditInput>(getDefaultForm());
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('auditFormData', JSON.stringify(formData));
-  }, [formData]);
+    setIsMounted(true);
+    const saved = localStorage.getItem('auditFormData');
+    if (saved) {
+      try {
+        setFormData(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to parse form data', e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem('auditFormData', JSON.stringify(formData));
+    }
+  }, [formData, isMounted]);
 
   const handleAddTool = () => {
     setFormData(prev => ({
