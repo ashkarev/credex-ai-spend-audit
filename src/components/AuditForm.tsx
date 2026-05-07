@@ -31,8 +31,8 @@ export default function AuditForm({ onSubmit }: { onSubmit: (data: AuditInput) =
       <input
         type="number"
         placeholder="Team size"
-        value={formData.teamSize}
-        onChange={(e) => setFormData(prev => ({ ...prev, teamSize: parseInt(e.target.value) }))}
+        value={Number.isNaN(formData.teamSize) ? '' : formData.teamSize}
+        onChange={(e) => setFormData(prev => ({ ...prev, teamSize: parseInt(e.target.value, 10) || 0 }))}
       />
 
       <select
@@ -68,10 +68,10 @@ export default function AuditForm({ onSubmit }: { onSubmit: (data: AuditInput) =
           <input
             type="number"
             placeholder="Monthly spend ($)"
-            value={tool.monthlySpend}
+            value={Number.isNaN(tool.monthlySpend) ? '' : tool.monthlySpend}
             onChange={(e) => {
               const newTools = [...formData.tools];
-              newTools[idx].monthlySpend = parseInt(e.target.value);
+              newTools[idx].monthlySpend = parseInt(e.target.value, 10) || 0;
               setFormData(prev => ({ ...prev, tools: newTools }));
             }}
           />
